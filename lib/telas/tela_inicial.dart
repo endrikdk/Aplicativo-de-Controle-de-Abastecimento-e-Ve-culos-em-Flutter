@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
 import 'tela_login.dart';
+import 'tela_veiculos.dart';
 
 class TelaInicial extends StatelessWidget {
   const TelaInicial({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     final auth = AuthService();
 
     return Scaffold(
@@ -27,8 +30,28 @@ class TelaInicial extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
-        child: Text('Bem-vindo ao Controle de Abastecimento!'),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              user != null
+                  ? 'Bem-vindo, ${user.email}'
+                  : 'Bem-vindo ao Controle de Abastecimento',
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const TelaVeiculos()),
+                );
+              },
+              icon: const Icon(Icons.directions_car),
+              label: const Text('Meus Veículos'),
+            ),
+          ],
+        ),
       ),
     );
   }

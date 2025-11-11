@@ -10,9 +10,9 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    debugPrint("🔥 Firebase inicializado com sucesso!");
+    debugPrint("Firebase inicializado com sucesso!");
   } catch (e) {
-    debugPrint("❌ Erro ao inicializar o Firebase: $e");
+    debugPrint("Erro ao inicializar o Firebase: $e");
   }
 
   runApp(const App());
