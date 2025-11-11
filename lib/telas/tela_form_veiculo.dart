@@ -4,7 +4,7 @@ import '../modelos/veiculo_model.dart';
 import '../services/veiculo_service.dart';
 
 class TelaFormVeiculo extends StatefulWidget {
-  final Veiculo? veiculo; // null = novo, não null = edição
+  final Veiculo? veiculo;
 
   const TelaFormVeiculo({super.key, this.veiculo});
 
@@ -58,35 +58,46 @@ class _TelaFormVeiculoState extends State<TelaFormVeiculo> {
 
     setState(() => _salvando = true);
 
-    final ano = int.tryParse(_anoController.text.trim()) ?? 0;
+    try {
+      final ano = int.tryParse(_anoController.text.trim()) ?? 0;
 
-    final veiculo = Veiculo(
-      id: widget.veiculo?.id ?? '',
-      modelo: _modeloController.text.trim(),
-      marca: _marcaController.text.trim(),
-      placa: _placaController.text.trim(),
-      ano: ano,
-      tipoCombustivel: _tipoCombustivel,
-      userId: user.uid,
-    );
+      final veiculo = Veiculo(
+        id: widget.veiculo?.id ?? '',
+        modelo: _modeloController.text.trim(),
+        marca: _marcaController.text.trim(),
+        placa: _placaController.text.trim(),
+        ano: ano,
+        tipoCombustivel: _tipoCombustivel,
+        userId: user.uid,
+      );
 
-    await _service.salvarVeiculo(veiculo);
+      await _service.salvarVeiculo(veiculo);
 
-    setState(() => _salvando = false);
+      if (!mounted) return;
+      setState(() => _salvando = false);
 
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          widget.veiculo == null
-              ? 'Veículo cadastrado com sucesso!'
-              : 'Veículo atualizado com sucesso!',
-        ),
-      ),
-    );
-
-    Navigator.pop(context); // volta para a lista de veículos
+      Future.microtask(() {
+        if (mounted) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                widget.veiculo == null
+                    ? 'Veículo cadastrado com sucesso!'
+                    : 'Veículo atualizado com sucesso!',
+              ),
+            ),
+          );
+        }
+      });
+    } catch (e) {
+      setState(() => _salvando = false);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao salvar: $e')));
+      }
+    }
   }
 
   @override

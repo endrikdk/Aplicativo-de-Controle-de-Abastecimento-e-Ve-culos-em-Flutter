@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
 import 'tela_login.dart';
 import 'tela_veiculos.dart';
+import 'tela_form_abastecimento.dart';
+import 'tela_historico_abastecimentos.dart';
 
 class TelaInicial extends StatelessWidget {
   const TelaInicial({super.key});
@@ -31,26 +33,61 @@ class TelaInicial extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              user != null
-                  ? 'Bem-vindo, ${user.email}'
-                  : 'Bem-vindo ao Controle de Abastecimento',
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const TelaVeiculos()),
-                );
-              },
-              icon: const Icon(Icons.directions_car),
-              label: const Text('Meus Veículos'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                user != null
+                    ? 'Bem-vindo, ${user.email}'
+                    : 'Bem-vindo ao Controle de Abastecimento',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const TelaVeiculos()),
+                  );
+                },
+                icon: const Icon(Icons.directions_car),
+                label: const Text('Meus Veículos'),
+              ),
+              const SizedBox(height: 16),
+
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const TelaFormAbastecimento(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.local_gas_station),
+                label: const Text('Registrar Abastecimento'),
+              ),
+              const SizedBox(height: 16),
+
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const TelaHistoricoAbastecimentos(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.history),
+                label: const Text('Histórico de Abastecimentos'),
+              ),
+            ],
+          ),
         ),
       ),
     );

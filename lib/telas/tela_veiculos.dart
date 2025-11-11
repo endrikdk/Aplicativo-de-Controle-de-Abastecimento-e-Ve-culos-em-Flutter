@@ -37,7 +37,10 @@ class TelaVeiculos extends StatelessWidget {
 
           if (veiculos.isEmpty) {
             return const Center(
-              child: Text('Nenhum veículo cadastrado ainda.'),
+              child: Text(
+                'Nenhum veículo cadastrado ainda.',
+                style: TextStyle(fontSize: 16),
+              ),
             );
           }
 
@@ -45,45 +48,79 @@ class TelaVeiculos extends StatelessWidget {
             itemCount: veiculos.length,
             itemBuilder: (context, index) {
               final v = veiculos[index];
-              return ListTile(
-                leading: const Icon(Icons.directions_car),
-                title: Text('${v.modelo} - ${v.placa}'),
-                subtitle: Text('${v.marca} • ${v.ano} • ${v.tipoCombustivel}'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => TelaFormVeiculo(veiculo: v),
-                    ),
-                  );
-                },
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () async {
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (ctx) => AlertDialog(
-                        title: const Text('Excluir veículo'),
-                        content: const Text(
-                          'Tem certeza que deseja excluir este veículo?',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(ctx, false),
-                            child: const Text('Cancelar'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(ctx, true),
-                            child: const Text('Excluir'),
-                          ),
-                        ],
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                elevation: 2,
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.directions_car,
+                    color: Colors.indigo,
+                  ),
+                  title: Text(
+                    '${v.modelo} - ${v.placa}',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(
+                    '${v.marca} • ${v.ano} • ${v.tipoCombustivel}',
+                    style: const TextStyle(height: 1.3),
+                  ),
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TelaFormVeiculo(veiculo: v),
                       ),
                     );
 
-                    if (confirm == true) {
-                      await service.deletarVeiculo(v.id);
-                    }
+                    Future.microtask(() {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Veículo atualizado.'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    });
                   },
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Excluir veículo'),
+                          content: const Text(
+                            'Tem certeza que deseja excluir este veículo?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, false),
+                              child: const Text('Cancelar'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, true),
+                              child: const Text(
+                                'Excluir',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirm == true) {
+                        await service.deletarVeiculo(v.id);
+
+                        Future.microtask(() {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Veículo excluído com sucesso!'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        });
+                      }
+                    },
+                  ),
                 ),
               );
             },
@@ -91,12 +128,20 @@ class TelaVeiculos extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Novo veículo
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const TelaFormVeiculo()),
           );
+
+          Future.microtask(() {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Veículo cadastrado.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          });
         },
         child: const Icon(Icons.add),
       ),
