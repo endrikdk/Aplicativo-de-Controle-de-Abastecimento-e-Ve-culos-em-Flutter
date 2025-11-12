@@ -34,5 +34,5 @@ flutter:
   # ===========================
   assets:
     - assets/images/endrik.jpg
-    # - assets/images/outro_banner.png
+    - assets/images/andre.jpg
     # - assets/icons/
